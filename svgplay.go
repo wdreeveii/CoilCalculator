@@ -12,6 +12,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 var (
@@ -71,6 +72,15 @@ func formString(req *http.Request, name string) (string, error) {
 	return s, err
 }
 
+func formFloat(req *http.Request, name string) (float64, error) {
+	str, err := formString(req, name)
+	if err != nil {
+		return 0, err
+	}
+	f, err := strconv.ParseFloat(str, 64)
+	return f, err
+}
+
 // Compile is an HTTP handler that reads Go source code from the request,
 // runs the program (returning any errors),
 // and sends the program's output as the HTTP response.
@@ -86,17 +96,17 @@ func GenSVG(w http.ResponseWriter, req *http.Request) {
 	}
 
 	if style == "rect" {
-		diameter, err := formInt(req, "bd")
+
+		w.Header().Set("Content-Type", "image/svg+xml")
+		genrect(w)
+	} else {
+		diameter, err := formFloat(req, "bd")
 		if err != nil {
 			http.Error(w, err.Error(), 500)
 			return
 		}
-
 		w.Header().Set("Content-Type", "image/svg+xml")
-		genrect(w, diameter)
-	} else {
-		w.Header().Set("Content-Type", "image/svg+xml")
-		gencir(w)
+		gencir(w, diameter)
 	}
 }
 
@@ -116,7 +126,7 @@ func genrect(w io.Writer) {
 	s.End()
 }
 
-func gencir(w io.Writer) {
+func gencir(w io.Writer, diameter float64) {
 	s := svg.New(w)
 	s.Start(canvas_width, canvas_height)
 
