@@ -17,15 +17,42 @@ body {
 		<table width="100%">
 			<tr>
 				<td width="60%" valign="top">
-					<label for='bobbin-style'>Coil Bobbin style: </label>
-					<select name='bobbin-style'>
-						<option value="rect">Rectangular</option>
-						<option value="circle">Circular</option>
-					</select>
+					<table>
+						<tr>
+							<td><label for='bobbin-style'>Coil Bobbin style: </label></td>
+							<td>
+								<select name='bobbin-style' value='{{bobbinStyle}}'>
+									<option value="rect">Rectangular</option>
+									<option value="circle">Circular</option>
+								</select>
+							</td>
+						</tr>
+						{{#if bobbinStyle == "rect"}}
+						<tr>
+							<td><label for="bobbin-length">Coil Bobbin length: </label></td>
+							<td><input type="text" name="bobbin-length" value="{{bobbinLength}}"/></td>
+						</tr>
+						<tr>
+							<td><label for="bobbin-width">Coil Bobbin width: </label></td>
+							<td><input type="text" name="bobbin-width" value="{{bobbinWidth}}"/></td>
+						</tr>
+						{{elseif bobbinStyle == "circle"}}
+						<tr>
+							<td><label for="bobbin-diameter">Coil Bobbin diameter: </label></td>
+							<td><input type="text" name="bobbin-diameter" value="{{bobbinDiameter}}"/></td>
+						</tr>
+						{{/if}}
+						<tr>
+							<td><label for="bobbin-height">Coil Bobbin height: </label></td>
+							<td><input type="text" name="bobbin-height" value="{{bobbinHeight}}"/></td>
+						</tr>
+					</table>
 				</td>
 				<td width="3%"></td>
 				<td width="27%" align="right" valign="top">
-					<div id="output"></div>
+					<div id="output">
+						<img src="/view?s={{bobbinStyle}}{{#bobbinDiameter}}&bd={{bobbinDiameter}}{{/bobbinDiameter}}{{#bobbinWidth}}&bw={{bobbinWidth}}{{/bobbinWidth}}{{#bobbinLength}}&bl={{bobbinLength}}{{/bobbinLength}}"/>
+					</div>
 				</td>
 			</tr>
 		</table>
@@ -39,7 +66,13 @@ body {
 		var ractive = new Ractive({
 			el: '#container',
 			template: '#template',
-			data: { name: 'hi' }
+			data: { 
+				bobbinStyle: 'rect',
+				bobbinDiameter: 100,
+				bobbinWidth: 100,
+				bobbinLength: 100,
+				bobbinHeight: 100,
+			 },
 		});
 	</script>
 </body>
