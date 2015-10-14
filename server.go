@@ -131,8 +131,8 @@ var (
 
 	middle_width = canvas_width / 2
 
-	xy_center = canvas_height / 3
-	xz_center = 2 * canvas_height / 3
+	xy_center = canvas_height / 4
+	xz_center = 3 * canvas_height / 4
 )
 
 func genrect(w io.Writer, width, length, height float64) {
@@ -160,6 +160,16 @@ func gencir(w io.Writer, diameter, height float64) {
 }
 
 func drawbackground(s *svg.SVG) {
+	s.Def()
+	s.Marker("uparrow", 5, 10, 20, 20)
+	s.Path("M5 0 L0 10 L10 10 Z", "fill:black")
+	s.MarkerEnd()
+
+	s.Marker("rightarrow", 10, 5, 20, 20)
+	s.Path("M0 0 L10 5 L0 10 Z", "fill:black")
+	s.MarkerEnd()
+	s.DefEnd()
+
 	// middle divider
 	s.Line(middle_width, 0, middle_width, canvas_height, "stroke:black")
 
@@ -168,4 +178,7 @@ func drawbackground(s *svg.SVG) {
 
 	// xz_center line
 	s.Line(0, xz_center, canvas_width, xz_center, "stroke:black")
+
+	s.Line(10, 30, 10, canvas_height/2, `fill="none"`, `stroke="black"`, `marker-start="url(#uparrow)"`)
+	s.Line(10, canvas_height/2, middle_width, canvas_height/2, `stroke="black"`, `marker-end="url(#rightarrow)"`)
 }
