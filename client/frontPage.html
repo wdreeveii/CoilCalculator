@@ -6,6 +6,7 @@
 body {
 	font-size: 12pt;
 }
+#output img { border-width: 1px; border-style: solid; border-color: black; }
 #edit, #output, #errors { width: 100%; text-align: left; }
 #edit { height: 560px; }
 #errors { color: #c00; }
@@ -51,7 +52,7 @@ body {
 				<td width="3%"></td>
 				<td width="27%" align="right" valign="top">
 					<div id="output">
-						<img src="/view?s={{bobbinStyle}}{{#bobbinDiameter}}&bd={{bobbinDiameter}}{{/bobbinDiameter}}{{#bobbinWidth}}&bw={{bobbinWidth}}{{/bobbinWidth}}{{#bobbinLength}}&bl={{bobbinLength}}{{/bobbinLength}}"/>
+						<img src="/view?s={{bobbinStyle}}&bd={{bobbinDiameter}}&bw={{bobbinWidth}}&bl={{bobbinLength}}&bh={{bobbinHeight}}"/>
 					</div>
 				</td>
 			</tr>

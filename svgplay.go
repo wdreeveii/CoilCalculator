@@ -95,10 +95,25 @@ func GenSVG(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	if style == "rect" {
+	height, err := formFloat(req, "bh")
+	if err != nil {
+		http.Error(w, err.Error(), 500)
+		return
+	}
 
+	if style == "rect" {
+		width, err := formFloat(req, "bw")
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+		length, err := formFloat(req, "bl")
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
 		w.Header().Set("Content-Type", "image/svg+xml")
-		genrect(w)
+		genrect(w, width, length, height)
 	} else {
 		diameter, err := formFloat(req, "bd")
 		if err != nil {
@@ -106,32 +121,51 @@ func GenSVG(w http.ResponseWriter, req *http.Request) {
 			return
 		}
 		w.Header().Set("Content-Type", "image/svg+xml")
-		gencir(w, diameter)
+		gencir(w, diameter, height)
 	}
 }
 
 var (
 	canvas_width  = 500
 	canvas_height = 500
-	middle_width  = canvas_width / 2
+
+	middle_width = canvas_width / 2
+
+	xy_center = canvas_height / 3
+	xz_center = 2 * canvas_height / 3
 )
 
-func genrect(w io.Writer) {
+func genrect(w io.Writer, width, length, height float64) {
 	s := svg.New(w)
 	s.Start(canvas_width, canvas_height)
 
-	s.Rect(middle_width-125, canvas_height/4-75, 100, 100, "fill:none;stroke:black")
-	s.Rect(middle_width-125, 2*canvas_height/3, 250, canvas_height/3, "fill:none;stroke:black")
+	drawbackground(s)
+
+	s.Rect(middle_width-int(width/2), xy_center-int(length/2), int(width), int(length), "fill:none;stroke:black")
+	s.Rect(middle_width-int(width/2), xz_center-int(height/2), int(width), int(height), "fill:none;stroke:black")
 
 	s.End()
 }
 
-func gencir(w io.Writer, diameter float64) {
+func gencir(w io.Writer, diameter, height float64) {
 	s := svg.New(w)
 	s.Start(canvas_width, canvas_height)
 
-	s.Circle(middle_width, canvas_height/3, 125, "fill:none;stroke:black")
-	s.Rect(middle_width-125, 2*canvas_height/3, 250, canvas_height/3, "fill:none;stroke:black")
+	drawbackground(s)
+
+	s.Circle(middle_width, xy_center, int(diameter/2), "fill:none;stroke:black")
+	s.Rect(middle_width-int(diameter/2), xz_center-int(height/2), int(diameter), int(height), "fill:none;stroke:black")
 
 	s.End()
+}
+
+func drawbackground(s *svg.SVG) {
+	// middle divider
+	s.Line(middle_width, 0, middle_width, canvas_height, "stroke:black")
+
+	// xy_center line
+	s.Line(0, xy_center, canvas_width, xy_center, "stroke:black")
+
+	// xz_center line
+	s.Line(0, xz_center, canvas_width, xz_center, "stroke:black")
 }
