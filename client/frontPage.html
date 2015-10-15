@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-<title>svgplay: SVGo sketching</title>
+<title>Coil Simulator</title>
 <style>
 body {
 	font-size: 12pt;
@@ -20,7 +20,7 @@ body {
 				<td width="60%" valign="top">
 					<table>
 						<tr>
-							<td><label for='bobbin-style'>Coil Bobbin style: </label></td>
+							<td><label for='bobbin-style'>Bobbin style: </label></td>
 							<td>
 								<select name='bobbin-style' value='{{bobbinStyle}}'>
 									<option value="rect">Rectangular</option>
@@ -30,29 +30,49 @@ body {
 						</tr>
 						{{#if bobbinStyle == "rect"}}
 						<tr>
-							<td><label for="bobbin-length">Coil Bobbin length: </label></td>
-							<td><input type="text" name="bobbin-length" value="{{bobbinLength}}"/></td>
+							<td><label for="bobbin-length">Bobbin length: </label></td>
+							<td><input type="text" name="bobbin-length" value="{{bobbinLength}}"/>(mm)</td>
 						</tr>
 						<tr>
-							<td><label for="bobbin-width">Coil Bobbin width: </label></td>
-							<td><input type="text" name="bobbin-width" value="{{bobbinWidth}}"/></td>
+							<td><label for="bobbin-width">Bobbin width: </label></td>
+							<td><input type="text" name="bobbin-width" value="{{bobbinWidth}}"/>(mm)</td>
+						</tr>
+						<tr>
+							<td><label for="bobbin-endcap-ratio">Bobbin Endcap Relief: </label></td>
+							<td><input type="text" name="bobbin-endcap-ratio" value="{{bobbinRatio}}"/>(0-1)</td>
 						</tr>
 						{{elseif bobbinStyle == "circle"}}
 						<tr>
-							<td><label for="bobbin-diameter">Coil Bobbin diameter: </label></td>
-							<td><input type="text" name="bobbin-diameter" value="{{bobbinDiameter}}"/></td>
+							<td><label for="bobbin-diameter">Bobbin diameter: </label></td>
+							<td><input type="text" name="bobbin-diameter" value="{{bobbinDiameter}}"/>(mm)</td>
 						</tr>
 						{{/if}}
 						<tr>
-							<td><label for="bobbin-height">Coil Bobbin height: </label></td>
-							<td><input type="text" name="bobbin-height" value="{{bobbinHeight}}"/></td>
+							<td><label for="bobbin-height">Bobbin height: </label></td>
+							<td><input type="text" name="bobbin-height" value="{{bobbinHeight}}"/>(mm)</td>
+						</tr>
+						<tr>
+							<td><label for="coil-width">Coil width: </label></td>
+							<td><input type="text" name="coil-width" value="{{coilWidth}}"/>(mm)</td>
+						</tr>
+						<tr>
+							<td><label for="coil-height">Coil height: </label></td>
+							<td><input type="text" name="coil-height" value="{{coilHeight}}"/>(mm)</td>
+						</tr>
+						<tr>
+							<td><label for="wire-diameter">Wire Diameter: </label></td>
+							<td><input type="text" name="wire-diameter" value="{{wireDiameter}}"/>(mm)</td>
+						</tr>
+						<tr>
+							<td><label for="number-turns">Number of Turns: </label></td>
+							<td><input type="text" name="number-turns" value="{{numTurns}}"/></td>
 						</tr>
 					</table>
 				</td>
 				<td width="3%"></td>
 				<td width="27%" align="right" valign="top">
 					<div id="output">
-						<img src="/view?s={{bobbinStyle}}&bd={{bobbinDiameter}}&bw={{bobbinWidth}}&bl={{bobbinLength}}&bh={{bobbinHeight}}"/>
+						<img src="/view?s={{bobbinStyle}}&bd={{bobbinDiameter}}&bw={{bobbinWidth}}&bl={{bobbinLength}}&br={{bobbinRatio}}&bh={{bobbinHeight}}&cw={{coilWidth}}&ch={{coilHeight}}&wd={{wireDiameter}}&nt={{numTurns}}"/>
 					</div>
 				</td>
 			</tr>
@@ -72,6 +92,7 @@ body {
 				bobbinDiameter: 100,
 				bobbinWidth: 100,
 				bobbinLength: 100,
+				bobbinRatio: 0.3,
 				bobbinHeight: 100,
 			 },
 		});

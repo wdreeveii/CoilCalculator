@@ -112,8 +112,13 @@ func GenSVG(w http.ResponseWriter, req *http.Request) {
 			http.Error(w, err.Error(), 500)
 			return
 		}
+		ratio, err := formFloat(req, "br")
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
 		w.Header().Set("Content-Type", "image/svg+xml")
-		genrect(w, width, length, height)
+		genrect(w, width, length, ratio, height)
 	} else {
 		diameter, err := formFloat(req, "bd")
 		if err != nil {
@@ -135,14 +140,21 @@ var (
 	xz_center = 3 * canvas_height / 4
 )
 
-func genrect(w io.Writer, width, length, height float64) {
+func genrect(w io.Writer, width, length, endratio, height float64) {
 	s := svg.New(w)
 	s.Start(canvas_width, canvas_height)
 
 	drawbackground(s)
+	x1 := middle_width - int(width/2)
+	x2 := middle_width + int(width/2)
+	yxy1 := xy_center - int(length/2)
+	yxy2 := xy_center + int(length/2)
 
-	s.Rect(middle_width-int(width/2), xy_center-int(length/2), int(width), int(length), "fill:none;stroke:black")
-	s.Rect(middle_width-int(width/2), xz_center-int(height/2), int(width), int(height), "fill:none;stroke:black")
+	s.Arc(x1, yxy1, int(width), int(width*endratio), 0, false, true, x2, yxy1, "fill:none;stroke:black")
+	s.Rect(x1, yxy1, int(width), int(length), "fill:none;stroke:black")
+	s.Arc(x1, yxy2, int(width), int(width*endratio), 0, false, false, x2, yxy2, "fill:none;stroke:black")
+
+	s.Rect(x1, xz_center-int(height/2), int(width), int(height), "fill:none;stroke:black")
 
 	s.End()
 }
@@ -162,23 +174,32 @@ func gencir(w io.Writer, diameter, height float64) {
 func drawbackground(s *svg.SVG) {
 	s.Def()
 	s.Marker("uparrow", 5, 10, 20, 20)
-	s.Path("M5 0 L0 10 L10 10 Z", "fill:black")
+	s.Path("M5 0 L0 10 L10 10 Z", "fill:grey")
 	s.MarkerEnd()
 
 	s.Marker("rightarrow", 10, 5, 20, 20)
-	s.Path("M0 0 L10 5 L0 10 Z", "fill:black")
+	s.Path("M0 0 L10 5 L0 10 Z", "fill:grey")
 	s.MarkerEnd()
 	s.DefEnd()
 
 	// middle divider
-	s.Line(middle_width, 0, middle_width, canvas_height, "stroke:black")
+	s.Line(middle_width, 0, middle_width, canvas_height, "stroke:grey")
+	s.Line(0, canvas_height/2, canvas_width, canvas_height/2, "stroke:grey")
 
 	// xy_center line
-	s.Line(0, xy_center, canvas_width, xy_center, "stroke:black")
+	s.Line(0, xy_center, canvas_width, xy_center, "stroke:grey")
 
 	// xz_center line
-	s.Line(0, xz_center, canvas_width, xz_center, "stroke:black")
+	s.Line(0, xz_center, canvas_width, xz_center, "stroke:grey")
 
-	s.Line(10, 30, 10, canvas_height/2, `fill="none"`, `stroke="black"`, `marker-start="url(#uparrow)"`)
-	s.Line(10, canvas_height/2, middle_width, canvas_height/2, `stroke="black"`, `marker-end="url(#rightarrow)"`)
+	s.Text(5, canvas_height/3-15, "Y", "fill:grey")
+	s.Text(middle_width/3+5, canvas_height/2-5, "X", "fill:grey")
+	s.Line(10, canvas_height/3, 10, canvas_height/2-10, `fill="none"`, `stroke="grey"`, `marker-start="url(#uparrow)"`)
+	s.Line(10, canvas_height/2-10, middle_width/3, canvas_height/2-10, `stroke="grey"`, `marker-end="url(#rightarrow)"`)
+
+	s.Text(5, (5*canvas_height/6)-15, "Z", "fill:grey")
+	s.Text(middle_width/3+5, canvas_height-5, "X", "fill:grey")
+	s.Line(10, 5*canvas_height/6, 10, canvas_height-10, `fill="none"`, `stroke="grey"`, `marker-start="url(#uparrow)"`)
+	s.Line(10, canvas_height-10, middle_width/3, canvas_height-10, `stroke="grey"`, `marker-end="url(#rightarrow)"`)
+
 }
