@@ -97,6 +97,7 @@ func GenSVG(w http.ResponseWriter, req *http.Request) {
 
 	height, err := formFloat(req, "bh")
 	if err != nil {
+		fmt.Println(err)
 		http.Error(w, err.Error(), 500)
 		return
 	}
@@ -131,8 +132,8 @@ func GenSVG(w http.ResponseWriter, req *http.Request) {
 }
 
 var (
-	canvas_width  = 500
-	canvas_height = 500
+	canvas_width  = 800
+	canvas_height = 800
 
 	middle_width = canvas_width / 2
 
@@ -149,10 +150,9 @@ func genrect(w io.Writer, width, length, endratio, height float64) {
 	x2 := middle_width + int(width/2)
 	yxy1 := xy_center - int(length/2)
 	yxy2 := xy_center + int(length/2)
-
-	s.Arc(x1, yxy1, int(width), int(width*endratio), 0, false, true, x2, yxy1, "fill:none;stroke:black")
+	s.Arc(x1, yxy1, int(width/2), int(width/2*endratio), 0, false, true, x2, yxy1, "fill:none;stroke:black")
 	s.Rect(x1, yxy1, int(width), int(length), "fill:none;stroke:black")
-	s.Arc(x1, yxy2, int(width), int(width*endratio), 0, false, false, x2, yxy2, "fill:none;stroke:black")
+	s.Arc(x1, yxy2, int(width/2), int(width/2*endratio), 0, false, false, x2, yxy2, "fill:none;stroke:black")
 
 	s.Rect(x1, xz_center-int(height/2), int(width), int(height), "fill:none;stroke:black")
 
